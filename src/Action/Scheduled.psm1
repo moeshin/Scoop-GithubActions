@@ -7,8 +7,11 @@ function Initialize-Scheduled {
     #>
     Write-Log 'Scheduled initialized'
 
+    $auto_pr_ps1 = Join-Path $BINARIES_FOLDER 'auto-pr.ps1'
+
     if ($env:GITHUB_BRANCH) {
         $_BRANCH = $env:GITHUB_BRANCH
+        sed -i ('s/master/' + $_BRANCH + '/') $auto_pr_ps1
     } else {
         $_BRANCH = 'master'
     }
@@ -25,7 +28,7 @@ function Initialize-Scheduled {
 
     $env:SCOOP_GH_TOKEN = $env:GITHUB_TOKEN
 
-    & (Join-Path $BINARIES_FOLDER 'auto-pr.ps1') @params
+    & $auto_pr_ps1 @params
     # TODO: Post some comment?? Or other way how to publish logs for non collaborators.
 
     Write-Log 'Scheduled finished'
